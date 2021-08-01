@@ -1,0 +1,50 @@
+#ifndef PHILOSOPHERS_H
+# define PHILOSOPHERS_H
+
+# include <stdio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <pthread.h>
+
+#define max(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
+#define min(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
+
+typedef struct s_arguments
+{
+	int	number_of_philo;
+	int	time_to_die;
+	int	time_to_eat;
+	int time_to_sleep;
+	int	number_of_time_each_philosopher_must_eat;
+}		t_arguments;
+
+typedef struct s_philosopher
+{
+	t_arguments			args;
+	int					id;
+	int					status;
+	pthread_mutex_t		*fork_1;
+	pthread_mutex_t		*fork_2;
+	int					number_of_time_has_ate;
+	long long			start_time;
+	int					*one_has_died;
+}		t_philosoher;
+
+int check_arg(char *arg);
+int ft_is_digit(char c);
+int ft_strlen(char *str);
+int	ft_atoi(const char *nptr);
+
+
+
+
+
+
+#endif
