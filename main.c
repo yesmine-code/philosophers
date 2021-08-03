@@ -74,8 +74,8 @@ void *func2(void *input)
 		{
 			print("died", *philo, 1);
 			//philo->general->one_has_died = 1;
-			//pthread_mutex_unlock(philo->fork_1);
-			//pthread_mutex_unlock(philo->fork_2);
+			pthread_mutex_unlock(philo->fork_1);
+			pthread_mutex_unlock(philo->fork_2);
 			break;
 		}
 	}
