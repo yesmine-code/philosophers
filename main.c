@@ -13,7 +13,6 @@ long long current_timestamp(long long start_time)
     struct timeval te;
     gettimeofday(&te, NULL); // get current time
     long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
-    // printf("milliseconds: %lld\n", milliseconds);
     return (milliseconds - start_time);
 }
 
@@ -54,7 +53,7 @@ void print(char *str, t_philosoher philo, int dead)
 	pthread_mutex_lock(philo.general->print);
 	if(philo.general->one_has_died == 0)
 	{
-		printf("%lld\t| %d\t| %s\n", current_timestamp(philo.general->start_time), philo.id, str);
+		printf("%lld\t| %d\t| %s\n", current_timestamp(philo.general->start_time), philo.id + 1, str);
 		philo.general->one_has_died = dead;
 	}
 	pthread_mutex_unlock(philo.general->print);
@@ -70,13 +69,13 @@ void *func2(void *input)
 	{
 		if (philo->general->one_has_died == 1 || philo->status == done)
 			break;
-		if (((current_timestamp(philo->general->start_time) - philo->time_last_eat) >= philo->args.time_to_die) &&
+		if (((current_timestamp(philo->general->start_time) - philo->time_last_eat) > philo->args.time_to_die) &&
 				philo->status != eating && philo->status != done)
 		{
 			print("died", *philo, 1);
-			philo->general->one_has_died = 1;
-			pthread_mutex_unlock(philo->fork_1);
-			pthread_mutex_unlock(philo->fork_2);
+			//philo->general->one_has_died = 1;
+			//pthread_mutex_unlock(philo->fork_1);
+			//pthread_mutex_unlock(philo->fork_2);
 			break;
 		}
 	}
@@ -91,9 +90,9 @@ void *func(void *input)
 
 	while (philo->number_of_time_has_ate < philo->args.number_of_time_each_philosopher_must_eat ||  philo->args.number_of_time_each_philosopher_must_eat == -1)
 	{
-		pthread_mutex_lock(philo->fork_1);
 		if (philo->general->one_has_died == 1)
 			break;
+		pthread_mutex_lock(philo->fork_1);
 		print("has taken a fork", *philo, 0);
 		pthread_mutex_lock(philo->fork_2);
 		print("has taken a fork", *philo, 0);
@@ -111,7 +110,7 @@ void *func(void *input)
 		print("is thinking", *philo, 0);
 	}
 	philo->status = done;
-	pthread_mutex_unlock(philo->general->philo_died);
+	//pthread_mutex_unlock(philo->general->philo_died);
 	return (NULL);
 }
 
@@ -167,16 +166,11 @@ int main(int ac, char **av)
 	{
 		ret = pthread_create(&thread[i], NULL,&func, &philo[i]);
 		r = pthread_create(&monitor[i], NULL,&func2, &philo[i]);
-		usleep(10);
 		if(ret != 0 || r != 0)
 		{
 			printf("ERROR while creating threads");
 			return 1;
 		}
-		/*pthread_detach(thread[i]);
-		pthread_detach(monitor[i]);
-		pthread_join(thread[i], NULL);
-		pthread_join(monitor[i], NULL);*/
 		i++;
 	}
 	
@@ -184,15 +178,15 @@ int main(int ac, char **av)
 	while (i < arg.number_of_philo)
 	{
 		ret = pthread_join(thread[i], NULL);
-		pthread_join(monitor[i], NULL);
-		if (ret != 0)
+		r = pthread_join(monitor[i], NULL);
+		if (ret != 0 || r != 0)
 		{
 			printf("ERROR while threads join");
 			return 1;
 		}
 		i++;
 	}
-	pthread_mutex_lock(general.philo_died);
-	pthread_mutex_unlock(general.philo_died);
+	//pthread_mutex_lock(general.philo_died);
+	//pthread_mutex_unlock(general.philo_died);
 	return 0;
 }
