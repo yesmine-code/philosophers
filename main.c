@@ -69,7 +69,7 @@ void *func2(void *input)
 	{
 		if (philo->general->one_has_died == 1 || philo->status == done)
 			break;
-		if (((current_timestamp(philo->general->start_time) - philo->time_last_eat) > philo->args.time_to_die) &&
+		if (((current_timestamp(philo->general->start_time) - philo->time_last_eat) >= philo->args.time_to_die) &&
 				philo->status != eating && philo->status != done)
 		{
 			print("died", *philo, 1);
