@@ -13,6 +13,7 @@ long long current_timestamp(long long start_time)
     struct timeval te;
     gettimeofday(&te, NULL); // get current time
     long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
+    // printf("milliseconds: %lld\n", milliseconds);
     return (milliseconds - start_time);
 }
 
@@ -53,7 +54,7 @@ void print(char *str, t_philosoher philo, int dead)
 	pthread_mutex_lock(philo.general->print);
 	if(philo.general->one_has_died == 0)
 	{
-		printf("%lld\t| %d\t| %s\n", current_timestamp(philo.general->start_time), philo.id + 1, str);
+		printf("%lld\t| %d\t| %s\n", current_timestamp(philo.general->start_time), philo.id, str);
 		philo.general->one_has_died = dead;
 	}
 	pthread_mutex_unlock(philo.general->print);
@@ -108,7 +109,7 @@ void *func(void *input)
 		print("is thinking", *philo, 0);
 	}
 	philo->status = done;
-	//pthread_mutex_unlock(philo->general->philo_died);
+	pthread_mutex_unlock(philo->general->philo_died);
 	return (NULL);
 }
 
@@ -156,35 +157,60 @@ int main(int ac, char **av)
 	while (i < arg.number_of_philo)
 	{
 		philo_init2(&philo[i], arg, &general);
-		philo_init(&philo[i], i, &forks[min(i, (i + 1) % arg.number_of_philo)], &forks[max(i, (i + 1) % arg.number_of_philo)]);
-		i++;
+		philo_init(&philo[i], i, &forks[(i + 1) % arg.number_of_philo], &forks[i]);
+		i = i + 2;
 	}
+
+	i = 1;
+	while (i < arg.number_of_philo)
+	{
+		philo_init2(&philo[i], arg, &general);
+		philo_init(&philo[i], i, &forks[i], &forks[(i + 1) % arg.number_of_philo]);
+		i = i + 2;
+	}
+	
 	i = 0;
 	while(i < arg.number_of_philo)
 	{
 		ret = pthread_create(&thread[i], NULL,&func, &philo[i]);
 		r = pthread_create(&monitor[i], NULL,&func2, &philo[i]);
+		usleep(10);
 		if(ret != 0 || r != 0)
 		{
 			printf("ERROR while creating threads");
 			return 1;
 		}
-		i++;
+		i += 2;
+	}
+
+	usleep(1000);
+	i = 1;
+	while(i < arg.number_of_philo)
+	{
+		ret = pthread_create(&thread[i], NULL,&func, &philo[i]);
+		r = pthread_create(&monitor[i], NULL,&func2, &philo[i]);
+		usleep(10);
+		if(ret != 0 || r != 0)
+		{
+			printf("ERROR while creating threads");
+			return 1;
+		}
+		i += 2;
 	}
 	
 	i = 0;
 	while (i < arg.number_of_philo)
 	{
 		ret = pthread_join(thread[i], NULL);
-		r = pthread_join(monitor[i], NULL);
-		if (ret != 0 || r != 0)
+		pthread_join(monitor[i], NULL);
+		if (ret != 0)
 		{
 			printf("ERROR while threads join");
 			return 1;
 		}
 		i++;
 	}
-	//pthread_mutex_lock(general.philo_died);
-	//pthread_mutex_unlock(general.philo_died);
+	pthread_mutex_lock(general.philo_died);
+	pthread_mutex_unlock(general.philo_died);
 	return 0;
 }
