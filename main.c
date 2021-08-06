@@ -62,7 +62,6 @@ void print(char *str, t_philosoher philo, int dead)
 void *func2(void *input)
 {
 	t_philosoher *philo;
-	struct timeval current_time;
 
 	philo = (t_philosoher*) input;
 	while(1)
@@ -85,7 +84,6 @@ void *func2(void *input)
 void *func(void *input)
 {
 	t_philosoher *philo;
-	struct timeval current_time;
 	philo = (t_philosoher*) input;
 
 	while (philo->number_of_time_has_ate < philo->args.number_of_time_each_philosopher_must_eat ||  philo->args.number_of_time_each_philosopher_must_eat == -1)
