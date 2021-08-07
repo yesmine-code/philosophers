@@ -54,7 +54,7 @@ void print(char *str, t_philosoher philo, int dead)
 	pthread_mutex_lock(philo.general->print);
 	if(philo.general->one_has_died == 0)
 	{
-		printf("%lld\t| %d\t| %s\n", current_timestamp(philo.general->start_time), philo.id, str);
+		printf("%lld\t| %d\t| %s\n", current_timestamp(philo.general->start_time), philo.id + 1, str);
 		philo.general->one_has_died = dead;
 	}
 	pthread_mutex_unlock(philo.general->print);
@@ -67,6 +67,7 @@ void *func2(void *input)
 	philo = (t_philosoher*) input;
 	while(1)
 	{
+		usleep(1);
 		if (philo->general->one_has_died == 1 || philo->status == done)
 			break;
 		if (((current_timestamp(philo->general->start_time) - philo->time_last_eat) >= philo->args.time_to_die) &&
@@ -174,7 +175,7 @@ int main(int ac, char **av)
 	{
 		ret = pthread_create(&thread[i], NULL,&func, &philo[i]);
 		r = pthread_create(&monitor[i], NULL,&func2, &philo[i]);
-		usleep(10);
+		//usleep(10);
 		if(ret != 0 || r != 0)
 		{
 			printf("ERROR while creating threads");
@@ -183,13 +184,13 @@ int main(int ac, char **av)
 		i += 2;
 	}
 
-	usleep(1000);
+	usleep(10);
 	i = 1;
 	while(i < arg.number_of_philo)
 	{
 		ret = pthread_create(&thread[i], NULL,&func, &philo[i]);
 		r = pthread_create(&monitor[i], NULL,&func2, &philo[i]);
-		usleep(10);
+		//usleep(10);
 		if(ret != 0 || r != 0)
 		{
 			printf("ERROR while creating threads");
