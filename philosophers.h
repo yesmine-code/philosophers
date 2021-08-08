@@ -28,7 +28,6 @@ typedef struct s_arguments
 typedef struct s_general
 {
 	pthread_mutex_t		*print;
-	pthread_mutex_t		*philo_died;
 	long long			start_time;
 	int					one_has_died;
 }		t_general;
@@ -40,6 +39,8 @@ typedef struct s_philosopher
 	int					status;
 	pthread_mutex_t		*fork_1;
 	pthread_mutex_t		*fork_2;
+	pthread_mutex_t		*mutex_status;
+	pthread_mutex_t		*mutex_last_eat;
 	int					number_of_time_has_ate;
 	long long			time_last_eat;
 	t_general			*general;
