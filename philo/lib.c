@@ -1,4 +1,4 @@
-#include "philosophers.h"
+#include "include/philosophers.h"
 
 int ft_strlen(char *str)
 {
