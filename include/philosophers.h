@@ -39,7 +39,6 @@ typedef struct s_arguments
 typedef struct s_general
 {
 	pthread_mutex_t		*print;
-	pthread_mutex_t		*philo_died;
 	long long			start_time;
 	int					one_has_died;
 }		t_general;
@@ -82,8 +81,7 @@ void		create_threads_and_monitors_lists(t_arguments arg,
 void		philo_init(t_philosoher *philo, int i, pthread_mutex_t *fork_1,
 				pthread_mutex_t *fork_2);
 long long	current_timestamp(long long start_time);
-void		general_init(t_general *general, pthread_mutex_t *philo_died,
-				pthread_mutex_t *print);
+void		general_init(t_general *general, pthread_mutex_t *print);
 void		philo_init2(t_philosoher *philo, t_arguments args,
 				t_general *general);
 float		time_diff(struct timeval *start, struct timeval *end);

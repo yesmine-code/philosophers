@@ -33,13 +33,9 @@ void	philo_init(t_philosoher *philo, int i,
 	philo->time_last_eat = 0;
 }
 
-void	general_init(t_general *general, pthread_mutex_t *philo_died,
-				pthread_mutex_t *print)
+void	general_init(t_general *general, pthread_mutex_t *print)
 {
-	pthread_mutex_init(philo_died, NULL);
 	pthread_mutex_init(print, NULL);
-	pthread_mutex_lock(philo_died);
-	general->philo_died = philo_died;
 	general->one_has_died = 0;
 	general->start_time = current_timestamp(0);
 	general->print = print;

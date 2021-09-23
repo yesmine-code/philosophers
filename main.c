@@ -115,7 +115,6 @@ int	main(int ac, char **av)
 	t_general		general;
 	t_arguments		arg;
 	pthread_mutex_t	print;
-	pthread_mutex_t	philo_died;
 
 	if (manage_error(ac) == 1)
 		return (1);
@@ -133,7 +132,7 @@ int	main(int ac, char **av)
 		arg.number_of_time_each_philosopher_must_eat = ft_atoi(av[5]);
 	else
 		arg.number_of_time_each_philosopher_must_eat = -1;
-	general_init(&general, &philo_died, &print);
+	general_init(&general, &print);
 	if (mainly_work(&arg, &general) == 1)
 		return (1);
 	return (0);
